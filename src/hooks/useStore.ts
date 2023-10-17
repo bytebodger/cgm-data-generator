@@ -26,7 +26,7 @@ interface State {
 
 export const useStore = create<State>()((set, get) => ({
    // values
-   beginOn: dayjs(time.getIsoDateString(time.adjustDays(-30))),
+   beginOn: dayjs(time.getIsoDateString(time.adjustDays(-7))),
    bottomGlucoseRange: 70,
    dataRows: [],
    startingGlucose: 0,

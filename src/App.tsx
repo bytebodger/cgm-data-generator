@@ -42,8 +42,15 @@ export const App = () => {
       }
       const movement = getGlucoseMovement(0);
       const directionCheck = Math.floor(Math.random() * (4 + trendDuration));
-      const nextTrendDuration = directionCheck <= 4 ? trendDuration + 1 : 1;
-      const nextTrendDirection = directionCheck <= 4 ? trendDirection : trendDirection * -1;
+      let nextTrendDuration = directionCheck <= 4 ? trendDuration + 1 : 1;
+      let nextTrendDirection = directionCheck <= 4 ? trendDirection : trendDirection * -1;
+      if (lastGlucose > 200 && nextTrendDirection === 1) {
+         nextTrendDuration = 1;
+         nextTrendDirection = -1;
+      } else if (lastGlucose < 50 && nextTrendDirection === -1) {
+         nextTrendDuration = 1;
+         nextTrendDirection = 1;
+      }
       const nextGlucose = lastGlucose + (movement * nextTrendDirection);
       const nextDataRows = [...currentDataRows];
       nextDataRows.push({
@@ -63,6 +70,20 @@ export const App = () => {
    const getDataTableRows = () => {
       return getDataRows().map(dataRow => {
          const { dateTime, glucose } = dataRow;
+         let steps = 0;
+         if (time.getDateObject(dateTime).getHours() > 6 && time.getDateObject(dateTime).getHours() < 21) {
+            const stepsRolls = Math.round(Math.random() * 5);
+            for (let i = 0; i < stepsRolls; i++) {
+               steps += Math.round(Math.random() * 20);
+            }
+         }
+         let hrv = 0;
+         if (time.getDateObject(dateTime).getHours() < 6 || time.getDateObject(dateTime).getHours() > 21) {
+            const showHrv = Math.round(Math.random() * 2);
+            if (showHrv === 1) {
+               hrv = (Math.round(Math.random() * 60000) + 10000) / 1000;
+            }
+         }
          return (
             <TableRow key={`dataRow-${dateTime}`}>
                <TableCell
@@ -82,6 +103,24 @@ export const App = () => {
                   }}
                >
                   {glucose}
+               </TableCell>
+               <TableCell
+                  size={'small'}
+                  sx={{
+                     paddingBottom: '2px',
+                     paddingTop: '2px',
+                  }}
+               >
+                  {steps}
+               </TableCell>
+               <TableCell
+                  size={'small'}
+                  sx={{
+                     paddingBottom: '2px',
+                     paddingTop: '2px',
+                  }}
+               >
+                  {hrv > 0 ? hrv : ''}
                </TableCell>
             </TableRow>
          )
@@ -151,7 +190,7 @@ export const App = () => {
                sx={{ marginBottom: 2 }}
                variant={HtmlElement.h5}
             >
-               Generated Data
+               Simulated Biometric Data
             </Typography>
          </Column>
       </Row>
@@ -176,6 +215,18 @@ export const App = () => {
                               paddingTop: 0.5,
                            }}>
                               Glucose
+                           </TableCell>
+                           <TableCell sx={{
+                              paddingBottom: 0.5,
+                              paddingTop: 0.5,
+                           }}>
+                              Steps
+                           </TableCell>
+                           <TableCell sx={{
+                              paddingBottom: 0.5,
+                              paddingTop: 0.5,
+                           }}>
+                              HRV
                            </TableCell>
                         </TableRow>
                      </TableHead>
