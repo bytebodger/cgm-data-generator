@@ -40,6 +40,11 @@ export const time = (() => {
       return dateObject.toISOString().split('T')[0];
    }
 
+   const getIsoDateTimeString = (date?: Date | string) => {
+      const dateObject = getDateObject(date);
+      return dateObject.toISOString();
+   }
+
    const removeOffset = (date?: Date | string) => {
       const offset = (new Date().getTimezoneOffset()) * -1;
       const dateObject = getDateObject(date);
@@ -54,6 +59,7 @@ export const time = (() => {
       adjustYears,
       getDateObject,
       getIsoDateString,
+      getIsoDateTimeString,
       removeOffset,
    }
 })()
